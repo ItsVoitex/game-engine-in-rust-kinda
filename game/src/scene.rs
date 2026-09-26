@@ -61,7 +61,7 @@ impl Scene
     {
     
 
-        let obdat = ObjectData::create(76.8,70.0,-1.0,&["Assets/textures/spike.png"],String::from("spike"));
+        let obdat = ObjectData::create(76.8,70.0,-0.5,&["Assets/textures/spike.png"],String::from("spike"));
         let obdat1 = ObjectData::create(1920.0,1080.0,0.0,&["Assets/textures/backround.png"],String::from("backround"));
         
         self.objects.push(Object::multi_create(&obdat1,String::from("backround")));
@@ -87,7 +87,7 @@ impl Scene
                 {
                     soffset += 76.8
                 } 
-                if scounter > 20
+                if scounter > 19
                 {
                     scounter = 1;
                 }
@@ -100,7 +100,7 @@ impl Scene
                             ocounter += 1;
                             soffset+=76.8;
                         }
-                        if ocounter == 5
+                        if ocounter == 3
                         {
                             self.objects[scounter].x = -921.6 + soffset;
                             self.objects[scounter].y = 504.9;

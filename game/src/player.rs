@@ -25,7 +25,6 @@ impl Player
         {
             object: object,
             on_ground: false
-
         }
     }
     pub fn draw(&mut self) {
