@@ -1,16 +1,19 @@
 use std::ffi::CString;
 use crate::swapper::TextureSwapper;
 use crate::texture::Texture;
-use shader::Shader;
+use crate::shader;
+use gl;
 use crate::mesh::Mesh;
 
-use crate::shader;
+
 
 pub struct Object
 {
     pub x:f32,
     pub y:f32,
     z:f32,
+    pub velocity_x:f32,
+    pub velocity_y:f32,
     offset:i32,
     pub object_data:ObjectData
 }
@@ -19,14 +22,15 @@ pub struct ObjectData
 {
     pub current_texture:u32,
     pub textures:TextureSwapper,
-    pub shader:Shader,
+    pub shader:shader::Shader,
+    pub object_type:String,
     data:Mesh,
 }
 
 
 impl Object 
 {
-    pub fn multi_create(object_data:ObjectData) -> Object
+    pub fn multi_create(object_data:&ObjectData,object_type:String) -> Object
     {
         
         let offset_location;
@@ -36,18 +40,35 @@ impl Object
             offset_location = gl::GetUniformLocation(object_data.shader.id,offset_name.as_ptr()
         );}
 
+        let mut temp = Vec::new();
+        for i in 0..object_data.textures.textures.len()
+        {
+            temp.push(Texture{id: object_data.textures.textures[i].id});
+        }
+        
         Object
         {
             x:0.0,
             y:0.0,
             z:0.0,
+            velocity_x:0.0,
+            velocity_y:0.0,
             offset:offset_location,
-            object_data : object_data
+            object_data : ObjectData {
+                current_texture: object_data.current_texture,
+                textures: TextureSwapper { textures: temp },
+                shader: shader::Shader { id: object_data.shader.id },
+                object_type: object_type, 
+                data: Mesh{vbo: object_data.data.vbo ,vao:object_data.data.vao , ebo: object_data.data.ebo},
+                }
+    
         }
     }
-    pub fn create(object_vertices:[f32;20],indices:[u32;6],vertex_path:&str,fragment_path:&str,texture_path:&[&str]) -> Object
+    pub fn create(width:f32,height:f32,depth:f32,texture_path:&[&str]) -> Object
     {
-        let shader = Shader::new(vertex_path, fragment_path);
+        
+        
+        let shader = shader::Shader::create();
         let offset_location;
 
         unsafe {
@@ -61,8 +82,10 @@ impl Object
             x:0.0,
             y:0.0,
             z:0.0,
+            velocity_x:0.0,
+            velocity_y:0.0,
             offset:offset_location,
-            object_data : ObjectData::create(object_vertices, indices, vertex_path, fragment_path, texture_path)
+            object_data : ObjectData::create(width,height,depth, texture_path,String::from("object"))
         }
     }
     
@@ -96,14 +119,25 @@ impl Object
 
 impl ObjectData
 {
-    pub fn create(object_vertices:[f32;20],indices:[u32;6],vertex_path:&str,fragment_path:&str,texture_path:&[&str]) -> ObjectData
+    pub fn create(width:f32,height:f32,depth:f32,texture_path:&[&str],object_type:String) -> ObjectData
     {
-        let shader = Shader::new(vertex_path, fragment_path);
+        let object_vertices: [f32; 20] = [
+        960.0+width/2.0,  540.9+height/2.0,  depth, 0.0, 0.0,
+        960.0-width/2.0,  540.9+height/2.0,  depth, 1.0, 0.0,
+        960.0-width/2.0,  540.9-height/2.0,  depth, 1.0, 1.0,
+        960.0+width/2.0,  540.9-height/2.0,  depth, 0.0, 1.0,
+        ];
+        let indices: [u32; 6]= [
+        0,  1,  2,
+        0,  2,  3,
+        ];
+        let shader = shader::Shader::create();
         ObjectData {
                 current_texture: 0,
                 textures: TextureSwapper::create(texture_path),
                 shader: shader,
                 data: Mesh::gendata(object_vertices,indices),
+                object_type: object_type,
 
         
         }

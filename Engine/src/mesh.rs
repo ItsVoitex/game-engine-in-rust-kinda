@@ -2,9 +2,9 @@ use gl;
 use std:: ffi::c_void;
 
 pub struct Mesh{
-    vbo:u32,
-    vao:u32,
-    ebo:u32,
+    pub vbo:u32,
+    pub vao:u32,
+    pub ebo:u32,
 }
 
 impl Mesh{
@@ -51,7 +51,7 @@ impl Mesh{
         unsafe{gl::BindVertexArray(self.vao);}
     }
 }
-impl Drop for Mesh
+/*impl Drop for Mesh
 {
     fn drop(&mut self)
     {
@@ -62,6 +62,6 @@ impl Drop for Mesh
         }
     }
 }
-
+*/
 
 

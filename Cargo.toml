@@ -1,13 +1,6 @@
-[package]
-name = "game"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-glfw = "0.62.0"
-gl = "0.14"
-#glam = "0.33.7"
-#raylib = "6.0"
-rand = "0.10.2"
-glam = "0.33.7"
-image = "0.25"
+[workspace]
+members = [
+    "Engine",
+    "game"
+]
+resolver = "3"

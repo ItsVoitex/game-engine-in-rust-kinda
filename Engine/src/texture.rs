@@ -46,7 +46,7 @@ impl Texture
     }
 }
 
-impl Drop for Texture
+/*impl Drop for Texture
 {
     fn drop(&mut self)
     {
@@ -55,4 +55,4 @@ impl Drop for Texture
         }
     }
 }
-
+*/
